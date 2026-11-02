@@ -255,7 +255,7 @@ GeomRoundBoxplot <- ggplot2::ggproto(
     data <- ggplot2::flip_data(data, params$flipped_aes)
     data$width <- data$width %||%
       params$width %||%
-      (resolution(data$x, FALSE, TRUE) * 0.9)
+      (resolution(data$x, FALSE) * 0.9)
 
     if (isFALSE(params$outliers)) {
       data$outliers <- NULL

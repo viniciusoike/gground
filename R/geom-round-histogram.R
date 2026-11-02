@@ -31,6 +31,8 @@
 #' `geom_round_histogram()` uses the same aesthetics as [geom_round_bar()];
 #' `geom_freqpoly()` uses the same aesthetics as [ggplot2::geom_line()].
 #'
+#' @param position Position adjustment, as a string or a position object.
+#' @param inherit.aes Whether to combine the layer mapping with the plot mapping.
 #' @export
 #' @inheritParams ggplot2::layer
 #' @inheritParams geom_round_bar

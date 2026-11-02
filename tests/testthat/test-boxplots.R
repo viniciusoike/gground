@@ -29,3 +29,27 @@ test_that("full horizontal boxplot renders error bars", {
     geom_round_boxplot(errorbar.draw = TRUE)
   expect_s3_class(ggplot2::ggplotGrob(plot), "gtable")
 })
+
+test_that("identity boxplots calculate their default width", {
+  data <- data.frame(
+    x = 1,
+    ymin = 0,
+    lower = 1,
+    middle = 2,
+    upper = 3,
+    ymax = 4
+  )
+  plot <- ggplot2::ggplot(
+    data,
+    ggplot2::aes(
+      x = x,
+      ymin = ymin,
+      lower = lower,
+      middle = middle,
+      upper = upper,
+      ymax = ymax
+    )
+  ) +
+    geom_round_boxplot(stat = "identity")
+  expect_s3_class(ggplot2::ggplotGrob(plot), "gtable")
+})
