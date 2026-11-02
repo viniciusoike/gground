@@ -1,8 +1,16 @@
-check_linewidth <- function (data, name) {
-    if (is.null(data$linewidth) && !is.null(data$size)) {
-        deprecate_soft0("3.4.0", I(paste0("Using the `size` aesthetic with ",
-                                          name)), I("the `linewidth` aesthetic"))
-        data$linewidth <- data$size
-    }
-    data
+check_linewidth <- function(data, name) {
+  if (is.null(data$linewidth) && !is.null(data$size)) {
+    cli::cli_warn(
+      "Using {.field size} with {name} is deprecated; use {.field linewidth} instead."
+    )
+    data$linewidth <- data$size
+  }
+  return(data)
+}
+
+as_radius <- function(radius) {
+  if (grid::is.unit(radius)) {
+    return(radius)
+  }
+  return(grid::unit(radius, "pt"))
 }

@@ -68,6 +68,7 @@ geom_round_bar <- function(
 
 #' @format NULL
 #' @usage NULL
+#' @rdname geom_round_bar
 #' @export
 #' @include geom-round-rect.R
 GeomRoundBar <- ggplot2::ggproto(

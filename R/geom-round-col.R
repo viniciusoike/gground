@@ -33,6 +33,7 @@ geom_round_col <- function(mapping = NULL, data = NULL,
 
 #' @format NULL
 #' @usage NULL
+#' @rdname geom_round_bar
 #' @export
 #' @include geom-round-rect.R
 # TODO: deprecate this

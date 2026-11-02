@@ -8,7 +8,7 @@
 #' across the levels of a categorical variable.
 #'
 #' `stat_bin()` is suitable only for continuous x data. If your x data is
-#' discrete, you probably want to use [stat_count()].
+#' discrete, you probably want to use [ggplot2::stat_count()].
 #'
 #' By default, the underlying computation (`stat_bin()`) uses 30 bins;
 #' this is not a good default, but the idea is to get you experimenting with
@@ -29,15 +29,15 @@
 #'
 #' @section Aesthetics:
 #' `geom_round_histogram()` uses the same aesthetics as [geom_round_bar()];
-#' `geom_freqpoly()` uses the same aesthetics as [geom_line()].
+#' `geom_freqpoly()` uses the same aesthetics as [ggplot2::geom_line()].
 #'
 #' @export
 #' @inheritParams ggplot2::layer
 #' @inheritParams geom_round_bar
-#' @param geom,stat Use to override the default connection between
+#' @param stat Use to override the default connection between
 #'   `geom_round_histogram()`/`geom_freqpoly()` and `stat_bin()`. For more information
-#'   at overriding these connections, see how the [stat][layer_stats] and
-#'   [geom][layer_geoms] arguments work.
+#'   at overriding these connections, see how the `stat` and
+#'   `geom` arguments work.
 #' @param binwidth The width of the bins. Can be specified as a numeric value,
 #'  or a function that calculates width from the data. The default is to use
 #' @param bins Number of bins. Overridden by `binwidth`.
@@ -82,51 +82,7 @@
 #' ggplot(diamonds, aes(price, after_stat(count / width))) +
 #'   geom_round_histogram(breaks = price_bins, color = "black") # area = count
 #'
-#' if (require("ggplot2movies")) {
-#' # Often we don't want the height of the bar to represent the
-#' # count of observations, but the sum of some other variable.
-#' # For example, the following plot shows the number of movies
-#' # in each rating.
-#' m <- ggplot(movies, aes(rating))
-#' m + geom_round_histogram(binwidth = 0.1)
-#'
-#' # If, however, we want to see the number of votes cast in each
-#' # category, we need to weight by the votes variable
-#' m +
-#'   geom_round_histogram(aes(weight = votes), binwidth = 0.1) +
-#'   ylab("votes")
-#'
-#' # For transformed scales, binwidth applies to the transformed data.
-#' # The bins have constant width on the transformed scale.
-#' m +
-#'  geom_round_histogram() +
-#'  scale_x_log10()
-#' m +
-#'   geom_round_histogram(binwidth = 0.05) +
-#'   scale_x_log10()
-#'
-#' # For transformed coordinate systems, the binwidth applies to the
-#' # raw data. The bins have constant width on the original scale.
-#'
-#' # Using log scales does not work here, because the first
-#' # bar is anchored at zero, and so when transformed becomes negative
-#' # infinity. This is not a problem when transforming the scales, because
-#' # no observations have 0 ratings.
-#' m +
-#'   geom_round_histogram(boundary = 0) +
-#'   coord_trans(x = "log10")
-#' # Use boundary = 0, to make sure we don't take sqrt of negative values
-#' m +
-#'   geom_round_histogram(boundary = 0) +
-#'   coord_trans(x = "sqrt")
-#'
-#' # You can also transform the y axis.  Remember that the base of the bars
-#' # has value 0, so log transformations are not appropriate
-#' m <- ggplot(movies, aes(x = rating))
-#' m +
-#'   geom_round_histogram(binwidth = 0.5) +
-#'   scale_y_sqrt()
-#' }
+
 #'
 #' # You can specify a function for calculating binwidth, which is
 #' # particularly useful when faceting along variables with

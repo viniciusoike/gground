@@ -99,81 +99,97 @@
 #'     position = "identity"
 #'   )
 #' }
-geom_round_tile <- function(mapping = NULL, data = NULL,
-                      stat = "identity", position = "identity",
-                      ...,
-                      linejoin = "mitre",
-                      radius = 2,
-                      na.rm = FALSE,
-                      show.legend = NA,
-                      inherit.aes = TRUE) {
-    if (grid::is.unit(radius)) {
-        radius <- radius
-    } else {
-        radius <- grid::unit(radius, "pt")
-    }
-    ggplot2::layer(
-        data = data,
-        mapping = mapping,
-        stat = stat,
-        geom = GeomRoundTile,
-        position = position,
-        show.legend = show.legend,
-        inherit.aes = inherit.aes,
-        params = list(
-            radius = radius,
-            linejoin = linejoin,
-            na.rm = na.rm,
-            ...
-        )
+geom_round_tile <- function(
+  mapping = NULL,
+  data = NULL,
+  stat = "identity",
+  position = "identity",
+  ...,
+  linejoin = "mitre",
+  radius = 2,
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE
+) {
+  radius <- as_radius(radius)
+  ggplot2::layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRoundTile,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      radius = radius,
+      linejoin = linejoin,
+      na.rm = na.rm,
+      ...
     )
+  )
 }
 
-draw_key_round_tile <- function (data, params, size)
-{
-    if (is.null(data$linewidth)) {
-        data$linewidth <- 0.5
-    }
-    lwd <- min(data$linewidth, min(size)/4)
-    grid::roundrectGrob(
-        r = min(params$radius, grid::unit(3, "pt")),
-        width = grid::unit(1, "npc") - grid::unit(lwd, "mm"),
-        height = grid::unit(1, "npc") - grid::unit(lwd, "mm"),
-        gp = grid::gpar(
-            col = data$colour %||% NA,
-            fill = ggplot2::fill_alpha(data$fill %||% "grey20", data$alpha),
-            lty = data$linetype %||% 1, lwd = lwd * ggplot2::.pt,
-            linejoin = params$linejoin %||% "mitre",
-            lineend = params$lineend %||% "butt")
-        )
+draw_key_round_tile <- function(data, params, size) {
+  if (is.null(data$linewidth)) {
+    data$linewidth <- 0.5
+  }
+  lwd <- min(data$linewidth, min(size) / 4)
+  grid::roundrectGrob(
+    r = min(params$radius, grid::unit(3, "pt")),
+    width = grid::unit(1, "npc") - grid::unit(lwd, "mm"),
+    height = grid::unit(1, "npc") - grid::unit(lwd, "mm"),
+    gp = grid::gpar(
+      col = data$colour %||% NA,
+      fill = ggplot2::fill_alpha(data$fill %||% "grey20", data$alpha),
+      lty = data$linetype %||% 1,
+      lwd = lwd * ggplot2::.pt,
+      linejoin = params$linejoin %||% "mitre",
+      lineend = params$lineend %||% "butt"
+    )
+  )
 }
 
 #' @format NULL
 #' @usage NULL
+#' @rdname geom_round_tile
 #' @export
 #' @include geom-round-rect.R
-GeomRoundTile <- ggplot2::ggproto("GeomRoundTile", GeomRoundRect,
-                    extra_params = c("na.rm"),
+GeomRoundTile <- ggplot2::ggproto(
+  "GeomRoundTile",
+  GeomRoundRect,
+  extra_params = c("na.rm"),
 
-                    setup_data = function(data, params) {
-                        data$width <- data$width %||% params$width %||% resolution(data$x, FALSE, TRUE)
-                        data$height <- data$height %||% params$height %||% resolution(data$y, FALSE, TRUE)
+  setup_data = function(data, params) {
+    data$width <- data$width %||% params$width %||% resolution(data$x, FALSE)
+    data$height <- data$height %||% params$height %||% resolution(data$y, FALSE)
 
-                        transform(data,
-                                  xmin = x - width / 2,  xmax = x + width / 2,  width = NULL,
-                                  ymin = y - height / 2, ymax = y + height / 2, height = NULL
-                        )
-                    },
+    transform(
+      data,
+      xmin = x - width / 2,
+      xmax = x + width / 2,
+      width = NULL,
+      ymin = y - height / 2,
+      ymax = y + height / 2,
+      height = NULL
+    )
+  },
 
-                    default_aes = ggplot2::aes(fill = "grey20", colour = NA, linewidth = 0.1, linetype = 1,
-                                      alpha = NA, width = NA, height = NA),
+  default_aes = ggplot2::aes(
+    fill = "grey20",
+    colour = NA,
+    linewidth = 0.1,
+    linetype = 1,
+    alpha = NA,
+    width = NA,
+    height = NA
+  ),
 
-                    required_aes = c("x", "y"),
+  required_aes = c("x", "y"),
 
-                    # These aes columns are created by setup_data(). They need to be listed here so
-                    # that GeomRect$handle_na() properly removes any bars that fall outside the defined
-                    # limits, not just those for which x and y are outside the limits
-                    non_missing_aes = c("xmin", "xmax", "ymin", "ymax"),
+  # These aes columns are created by setup_data(). They need to be listed here so
+  # that GeomRect$handle_na() properly removes any bars that fall outside the defined
+  # limits, not just those for which x and y are outside the limits
+  non_missing_aes = c("xmin", "xmax", "ymin", "ymax"),
 
-                    draw_key = draw_key_round_tile
+  draw_key = draw_key_round_tile
 )

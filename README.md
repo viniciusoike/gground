@@ -14,7 +14,7 @@
 
 ## Installation
 
-You can install the development version of `gground` from [GitHub](https://github.com/) with
+You can install the development version of `gground` from [GitHub](https://github.com/dxsbiocc/gground) with
 
 ``` r
 if (!require("devtools", quietly = TRUE))
@@ -146,9 +146,9 @@ ggplot(iris, aes(x = Species, y = Petal.Width, fill = Species)) +
 ### 9. polar
 
 ``` r
-group_by(mpg, class) %>%
-    summarise(percent = n() / nrow(mpg)) %>%
-    ggplot(aes(x = 1, y = percent, fill = class)) +
+as.data.frame(table(mpg$class)) |>
+    transform(percent = Freq / nrow(mpg)) |>
+    ggplot(aes(x = 1, y = percent, fill = Var1)) +
     geom_round_col(colour = "white", radius = unit(2, 'pt')) +
     coord_polar(theta = 'y') +
     xlim(c(0, 2)) +
@@ -168,3 +168,18 @@ ggplot(mpg) +
 ```
 
 ![](vignettes/figures/element_round_rect.png)
+
+## Compatibility and development
+
+Requires ggplot2 3.5.0 or later. The test suite renders every exported geom,
+including legends, and checks coordinate transformations, orientation, notches,
+and outlier styling. CI checks the minimum ggplot2 version and the current release.
+Some rendering paths still use private ggplot2 helpers; compatibility with future
+versions requires continued testing.
+
+Run local validation with:
+
+```r
+devtools::test()
+devtools::check()
+```

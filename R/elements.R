@@ -1,6 +1,6 @@
 #' @title: Round rectangle element
 #' @description
-#' In conjunction with the \link{theme} system, the `element_` functions
+#' In conjunction with the [ggplot2::theme()] system, the `element_` functions
 #' specify the display of how non-data components of the plot are drawn.
 #'
 #'   - `element_blank()`: draws nothing, and assigns no space.

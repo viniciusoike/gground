@@ -1,3 +1,7 @@
 ^gground\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^\.github$
+^Rplots\.pdf$
+^\.claude$
+^vignettes$
