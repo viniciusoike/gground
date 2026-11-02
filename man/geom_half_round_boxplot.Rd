@@ -54,7 +54,7 @@ call to a position adjustment function.}
 
 \item{outliers}{Boolean whether to draw outliers.}
 
-\item{outlier.colour}{The color of the outliers.}
+\item{outlier.colour, outlier.color}{The color of the outliers.}
 
 \item{outlier.fill}{The fill color of the outliers.}
 

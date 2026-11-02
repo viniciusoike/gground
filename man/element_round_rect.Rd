@@ -35,7 +35,7 @@ calculating final element state.}
 An S3 object of class \code{element}, \code{rel}, or \code{margin}.
 }
 \description{
-In conjunction with the \link{theme} system, the \code{element_} functions
+In conjunction with the \code{\link[ggplot2:theme]{ggplot2::theme()}} system, the \code{element_} functions
 specify the display of how non-data components of the plot are drawn.
 \itemize{
 \item \code{element_blank()}: draws nothing, and assigns no space.

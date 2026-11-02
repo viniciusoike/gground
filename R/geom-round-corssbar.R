@@ -19,152 +19,222 @@
 #' @param inherit.aes If FALSE, overrides the default aesthetics.
 #' @export
 #' @rdname geom_round_crossbar
-geom_round_crossbar <- function(mapping = NULL, data = NULL,
-                          stat = "identity", position = "identity",
-                          ...,
-                          fatten = 2.5,
-                          radius = 2,
-                          na.rm = FALSE,
-                          orientation = NA,
-                          show.legend = NA,
-                          inherit.aes = TRUE) {
-    if (grid::is.unit(radius)) {
-        radius <- radius
-    } else {
-        radius <- grid::unit(radius, "pt")
-    }
-    ggplot2::layer(
-        data = data,
-        mapping = mapping,
-        stat = stat,
-        geom = GeomRoundCrossbar,
-        position = position,
-        show.legend = show.legend,
-        inherit.aes = inherit.aes,
-        params = list(
-            radius = radius,
-            fatten = fatten,
-            na.rm = na.rm,
-            orientation = orientation,
-            ...
-        )
+geom_round_crossbar <- function(
+  mapping = NULL,
+  data = NULL,
+  stat = "identity",
+  position = "identity",
+  ...,
+  fatten = 2.5,
+  radius = 2,
+  na.rm = FALSE,
+  orientation = NA,
+  show.legend = NA,
+  inherit.aes = TRUE
+) {
+  radius <- as_radius(radius)
+  ggplot2::layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomRoundCrossbar,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      radius = radius,
+      fatten = fatten,
+      na.rm = na.rm,
+      orientation = orientation,
+      ...
     )
+  )
 }
 
 #' @format NULL
 #' @usage NULL
+#' @rdname geom_round_crossbar
 #' @export
 draw_key_round_crossbar <- function(data, params, size) {
-    gp <- grid::gpar(
-        col = data$colour %||% "grey20",
-        fill = ggplot2::fill_alpha(data$fill %||% "white", data$alpha),
-        lwd = (data$linewidth %||% 0.5) * ggplot2::.pt,
-        lty = data$linetype %||% 1,
-        lineend = params$lineend %||% "butt",
-        linejoin = params$linejoin %||% "mitre")
+  gp <- grid::gpar(
+    col = data$colour %||% "grey20",
+    fill = ggplot2::fill_alpha(data$fill %||% "white", data$alpha),
+    lwd = (data$linewidth %||% 0.5) * ggplot2::.pt,
+    lty = data$linetype %||% 1,
+    lineend = params$lineend %||% "butt",
+    linejoin = params$linejoin %||% "mitre"
+  )
 
-    if (isTRUE(params$flipped_aes)) {
-        grid::grobTree(
-            grid::roundrectGrob(r = min(params$radius, grid::unit(2, "pt")),
-                                height = 0.75, width = 0.7),
-            grid::linesGrob(0.5, c(0.125, 0.875)), gp = gp)
-    }
-    else {
-        grid::grobTree(
-            grid::roundrectGrob(r = min(params$radius, grid::unit(2, "pt")),
-                                height = 0.75, width = 0.7),
-            grid::linesGrob(c(0.125, 0.875), 0.5), gp = gp)
-    }
+  if (isTRUE(params$flipped_aes)) {
+    grid::grobTree(
+      grid::roundrectGrob(
+        r = min(params$radius, grid::unit(2, "pt")),
+        height = 0.75,
+        width = 0.7
+      ),
+      grid::linesGrob(0.5, c(0.125, 0.875)),
+      gp = gp
+    )
+  } else {
+    grid::grobTree(
+      grid::roundrectGrob(
+        r = min(params$radius, grid::unit(2, "pt")),
+        height = 0.75,
+        width = 0.7
+      ),
+      grid::linesGrob(c(0.125, 0.875), 0.5),
+      gp = gp
+    )
+  }
 }
 
 #' @format NULL
 #' @usage NULL
+#' @rdname geom_round_crossbar
 #' @export
-GeomRoundCrossbar <- ggplot2::ggproto("GeomRoundCrossbar", ggplot2::Geom,
-                        setup_params = function(data, params) {
-                            ggplot2::GeomErrorbar$setup_params(data, params)
-                        },
+GeomRoundCrossbar <- ggplot2::ggproto(
+  "GeomRoundCrossbar",
+  ggplot2::Geom,
+  setup_params = function(data, params) {
+    ggplot2::GeomErrorbar$setup_params(data, params)
+  },
 
-                        extra_params = c("na.rm", "orientation"),
+  extra_params = c("na.rm", "orientation"),
 
-                        setup_data = function(data, params) {
-                            ggplot2::GeomErrorbar$setup_data(data, params)
-                        },
+  setup_data = function(data, params) {
+    ggplot2::GeomErrorbar$setup_data(data, params)
+  },
 
-                        default_aes = ggplot2::aes(colour = "black", fill = NA, linewidth = 0.5, linetype = 1,
-                                          alpha = NA),
+  default_aes = ggplot2::aes(
+    colour = "black",
+    fill = NA,
+    linewidth = 0.5,
+    linetype = 1,
+    alpha = NA
+  ),
 
-                        required_aes = c("x", "y", "ymin|xmin", "ymax|xmax"),
+  required_aes = c("x", "y", "ymin|xmin", "ymax|xmax"),
 
-                        draw_key = draw_key_round_crossbar,
+  draw_key = draw_key_round_crossbar,
 
-                        draw_panel = function(self, data, panel_params, coord, lineend = "butt",
-                                              linejoin = "mitre", fatten = 2.5, width = NULL,
-                                              flipped_aes = FALSE, radius = 2) {
-                            if (grid::is.unit(radius)) {
-                                radius <- radius
-                            } else {
-                                radius <- grid::unit(radius, "pt")
-                            }
-                            data <- check_linewidth(data, ggplot2::snake_class(self))
-                            data <- ggplot2::flip_data(data, flipped_aes)
+  draw_panel = function(
+    self,
+    data,
+    panel_params,
+    coord,
+    lineend = "butt",
+    linejoin = "mitre",
+    fatten = 2.5,
+    width = NULL,
+    flipped_aes = FALSE,
+    radius = 2
+  ) {
+    radius <- as_radius(radius)
+    data <- check_linewidth(data, ggplot2::snake_class(self))
+    data <- ggplot2::flip_data(data, flipped_aes)
 
-                            middle <- transform(data, x = xmin, xend = xmax, yend = y, linewidth = linewidth * fatten, alpha = NA)
+    middle <- transform(
+      data,
+      x = xmin,
+      xend = xmax,
+      yend = y,
+      linewidth = linewidth * fatten,
+      alpha = NA
+    )
 
-                            has_notch <- !is.null(data$ynotchlower) && !is.null(data$ynotchupper) &&
-                                !is.na(data$ynotchlower) && !is.na(data$ynotchupper)
+    has_notch <- !is.null(data$ynotchlower) && !is.null(data$ynotchupper)
+    if (has_notch) {
+      has_notch <- !is.na(data$ynotchlower) & !is.na(data$ynotchupper)
+    } else {
+      has_notch <- rep(FALSE, nrow(data))
+    }
 
-                            if (has_notch) {
-                                if (data$ynotchlower < data$ymin  ||  data$ynotchupper > data$ymax)
-                                    cli::cli_inform(c(
-                                        "Notch went outside hinges",
-                                        i = "Do you want {.code notch = FALSE}?"
-                                    ))
+    if (
+      any(
+        has_notch &
+          (data$ynotchlower < data$ymin | data$ynotchupper > data$ymax),
+        na.rm = TRUE
+      )
+    ) {
+      cli::cli_inform(c(
+        "Notch went outside hinges",
+        i = "Do you want {.code notch = FALSE}?"
+      ))
+    }
 
-                                notchindent <- (1 - data$notchwidth) * (data$xmax - data$xmin) / 2
+    boxes <- vector("list", nrow(data))
+    for (i in seq_len(nrow(data))) {
+      row <- data[i, , drop = FALSE]
+      if (has_notch[i]) {
+        indent <- (1 - row$notchwidth) * (row$xmax - row$xmin) / 2
+        middle$x[i] <- middle$x[i] + indent
+        middle$xend[i] <- middle$xend[i] - indent
+        x <- c(
+          row$xmin,
+          row$xmin,
+          row$xmin + indent,
+          row$xmin,
+          row$xmin,
+          row$xmax,
+          row$xmax,
+          row$xmax - indent,
+          row$xmax,
+          row$xmax,
+          row$xmin
+        )
+        y <- c(
+          row$ymax,
+          row$ynotchupper,
+          row$y,
+          row$ynotchlower,
+          row$ymin,
+          row$ymin,
+          row$ynotchlower,
+          row$y,
+          row$ynotchupper,
+          row$ymax,
+          row$ymax
+        )
+      } else {
+        x <- c(row$xmin, row$xmin, row$xmax, row$xmax, row$xmin)
+        y <- c(row$ymax, row$ymin, row$ymin, row$ymax, row$ymax)
+      }
+      boxes[[i]] <- ggplot2:::data_frame0(
+        x = x,
+        y = y,
+        alpha = rep(row$alpha, length(x)),
+        colour = rep(row$colour, length(x)),
+        linewidth = rep(row$linewidth, length(x)),
+        linetype = rep(row$linetype, length(x)),
+        fill = rep(row$fill, length(x)),
+        group = rep(i, length(x))
+      )
+    }
+    box <- do.call(rbind, boxes)
+    box <- ggplot2::flip_data(box, flipped_aes)
+    middle <- ggplot2::flip_data(middle, flipped_aes)
 
-                                middle$x <- middle$x + notchindent
-                                middle$xend <- middle$xend - notchindent
+    ggplot2:::ggname(
+      "geom_round_crossbar",
+      grid::gTree(
+        children = grid::gList(
+          ggforce::GeomShape$draw_panel(
+            box,
+            panel_params,
+            coord,
+            radius = radius
+          ),
+          ggplot2::GeomSegment$draw_panel(
+            middle,
+            panel_params,
+            coord,
+            lineend = lineend,
+            linejoin = linejoin
+          )
+        )
+      )
+    )
+  },
 
-                                box <- ggplot2:::data_frame0(
-                                    x = c(
-                                        data$xmin, data$xmin, data$xmin + notchindent, data$xmin, data$xmin,
-                                        data$xmax, data$xmax, data$xmax - notchindent, data$xmax, data$xmax,
-                                        data$xmin
-                                    ),
-                                    y = c(
-                                        data$ymax, data$ynotchupper, data$y, data$ynotchlower, data$ymin,
-                                        data$ymin, data$ynotchlower, data$y, data$ynotchupper, data$ymax,
-                                        data$ymax
-                                    ),
-                                    alpha = rep(data$alpha, 11),
-                                    colour = rep(data$colour, 11),
-                                    linewidth = rep(data$linewidth, 11),
-                                    linetype = rep(data$linetype, 11),
-                                    fill = rep(data$fill, 11),
-                                    group = rep(seq_len(nrow(data)), 11)
-                                )
-                            } else {
-                                # No notch
-                                box <- ggplot2:::data_frame0(
-                                    x = c(data$xmin, data$xmin, data$xmax, data$xmax, data$xmin),
-                                    y = c(data$ymax, data$ymin, data$ymin, data$ymax, data$ymax),
-                                    alpha = rep(data$alpha, 5),
-                                    colour = rep(data$colour, 5),
-                                    linewidth = rep(data$linewidth, 5),
-                                    linetype = rep(data$linetype, 5),
-                                    fill = rep(data$fill, 5),
-                                    group = rep(seq_len(nrow(data)), 5) # each bar forms it's own group
-                                )
-                            }
-                            box <- ggplot2::flip_data(box, flipped_aes)
-                            middle <- ggplot2::flip_data(middle, flipped_aes)
-
-                            ggplot2:::ggname("geom_round_crossbar", grid::gTree(children = grid::gList(
-                                ggforce::GeomShape$draw_panel(box, panel_params, coord, radius = radius),
-                                ggplot2::GeomSegment$draw_panel(middle, panel_params, coord, lineend = lineend, linejoin = linejoin)
-                            )))
-                        },
-
-                        rename_size = TRUE
+  rename_size = TRUE
 )
